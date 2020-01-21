@@ -14,6 +14,8 @@
 		3A0F79F323D6A83F004BA397 /* Assignment2_761984.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3A0F79F123D6A83F004BA397 /* Assignment2_761984.xcdatamodeld */; };
 		3A0F79F523D6A840004BA397 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A0F79F423D6A840004BA397 /* Assets.xcassets */; };
 		3A0F79F823D6A840004BA397 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A0F79F623D6A840004BA397 /* LaunchScreen.storyboard */; };
+		3A0F7A0023D6ABAA004BA397 /* TasksTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0F79FF23D6ABAA004BA397 /* TasksTableViewController.swift */; };
+		3A0F7A0223D6AC9D004BA397 /* Tasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A0F7A0123D6AC9D004BA397 /* Tasks.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		3A0F79F423D6A840004BA397 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3A0F79F723D6A840004BA397 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3A0F79F923D6A840004BA397 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3A0F79FF23D6ABAA004BA397 /* TasksTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksTableViewController.swift; sourceTree = "<group>"; };
+		3A0F7A0123D6AC9D004BA397 /* Tasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tasks.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +70,8 @@
 				3A0F79F623D6A840004BA397 /* LaunchScreen.storyboard */,
 				3A0F79F923D6A840004BA397 /* Info.plist */,
 				3A0F79F123D6A83F004BA397 /* Assignment2_761984.xcdatamodeld */,
+				3A0F79FF23D6ABAA004BA397 /* TasksTableViewController.swift */,
+				3A0F7A0123D6AC9D004BA397 /* Tasks.swift */,
 			);
 			path = Assignment2_761984;
 			sourceTree = "<group>";
@@ -142,8 +148,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A0F79F323D6A83F004BA397 /* Assignment2_761984.xcdatamodeld in Sources */,
+				3A0F7A0023D6ABAA004BA397 /* TasksTableViewController.swift in Sources */,
 				3A0F79ED23D6A83F004BA397 /* ViewController.swift in Sources */,
 				3A0F79E923D6A83F004BA397 /* AppDelegate.swift in Sources */,
+				3A0F7A0223D6AC9D004BA397 /* Tasks.swift in Sources */,
 				3A0F79EB23D6A83F004BA397 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
