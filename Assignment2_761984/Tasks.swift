@@ -15,8 +15,11 @@ class Tasks{
         self.days = days
     }
     
+    var counter = 0
     var title: String
     var days: Int
+    
+    
     
 }
 

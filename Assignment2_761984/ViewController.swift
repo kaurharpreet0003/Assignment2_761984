@@ -20,60 +20,52 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        saveCData()
+        loadCData()
         
-        saveCoreData()
-        NotificationCenter.default.addObserver(self, selector: #selector(saveCoreData), name: UIApplication.willResignActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(saveCData), name: UIApplication.willResignActiveNotification, object: nil)
     }
     
-    @objc func saveCoreData(){
-        
+    @objc func saveCData(){
        // call clear core data
-        clearCoreData()
-        
+        clearCData()
         //create an instance of app delegate
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let ManagedContext = appDelegate.persistentContainer.viewContext
                
-                           // context
-                           let ManagedContext = appDelegate.persistentContainer.viewContext
+                    for task in tasks!{
+                        let taskEntity = NSEntityDescription.insertNewObject(forEntityName: "Model", into: ManagedContext)
+                        taskEntity.setValue(task.title, forKey: "title")
+                        taskEntity.setValue(task.days, forKey: "days")
                
-                           for task in tasks!{
-                               let taskEntity = NSEntityDescription.insertNewObject(forEntityName: "TaskModel", into: ManagedContext)
-                              taskEntity.setValue(task.title, forKey: "title")
-                              taskEntity.setValue(task.days, forKey: "days")
-               
-                               print("\(task.days)")
-                               //save  context
-                               do{
-                                   try ManagedContext.save()
-                               }catch{
-                                   print(error)
-                               }
-               
-               
-                               print("days: \(task.days)")
-                           }
-        loadCoreData()
+                        print("\(task.days)")
+                        do{
+                            try ManagedContext.save()
+                            }catch{
+                                print(error)
+                            }
+                        print("days: \(task.days)")
+                    }
+        loadCData()
     }
     
-    func loadCoreData(){
+    func loadCData(){
         tasks = [Tasks]()
          //create an instance of app delegate
                 let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                
-                // context
                 let ManagedContext = appDelegate.persistentContainer.viewContext
          
-         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskModel")
+         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Model")
         
          do{
+            
              let results = try ManagedContext.fetch(fetchRequest)
              if results is [NSManagedObject]{
+                
                  for result in results as! [NSManagedObject]{
-                     let title = result.value(forKey:"title") as! String
-                  
-                     let days = result.value(forKey: "days") as! Int
                     
-                     
+                     let title = result.value(forKey:"title") as! String
+                     let days = result.value(forKey: "days") as! Int
                      tasks?.append(Tasks(title: title, days: days))
                     
                  }
@@ -86,31 +78,32 @@ class ViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
           
-           delegate?.updateText(taskArray: tasks!)
-           //taskTable?.updateTask(task: task1!)
+           delegate?.updateText(taskarray: tasks!)
+        print("\(tasks!)......")
     
-       }
+    }
     
-    func clearCoreData(){
+    func clearCData(){
         
     
      //create an instance of app delegate
      let appDelegate = UIApplication.shared.delegate as! AppDelegate
      
-     // context
      let ManagedContext = appDelegate.persistentContainer.viewContext
-        
-        //create fetch request
-          let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskModel")
+          let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Model")
         
         fetchRequest.returnsObjectsAsFaults = false
         do{
             
             let results = try ManagedContext.fetch(fetchRequest)
+            
+        
             for managedObjects in results{
+                
                 if let managedObjectsData = managedObjects as? NSManagedObject{
                     
                     ManagedContext.delete(managedObjectsData)
+                    
                 }
             }
         }
@@ -119,7 +112,25 @@ class ViewController: UIViewController {
             }
         
     }
-
-
+    @IBAction func addingTask(_ sender: UIBarButtonItem) {
+    
+        let titleT = fields[0].text ?? ""
+           let daysD = Int(fields[1].text ?? "0") ?? 0
+                      
+                   
+           let task = Tasks(title: titleT, days: daysD)
+        
+           tasks?.append(task)
+           
+                      for textField in fields {
+                           textField.text = ""
+                          textField.resignFirstResponder()
+                      }
+           
+           print(titleT)
+           print(daysD)
+           print("Task: \(tasks!)")
+                  
+    }
 }
 
