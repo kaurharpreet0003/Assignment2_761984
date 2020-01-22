@@ -11,10 +11,12 @@ import CoreData
 
 class TasksTableViewController: UITableViewController {
     
+    @IBOutlet weak var dateSorting: UIBarButtonItem!
+    @IBOutlet weak var alphaSort: UIBarButtonItem!
     @IBOutlet weak var searchBar: UISearchBar!
     
     var tasks: [Tasks]?
-    var filter_data:[Tasks]?
+    var temp_data:[Tasks]?
     var add = "0"
     
     
@@ -26,8 +28,9 @@ class TasksTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
-        //searchBar.delegate = self
+        searchBar.delegate = self
         loadCoreData()
+        temp_data = tasks
     }
 
     // MARK: - Table view data source
@@ -39,20 +42,21 @@ class TasksTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return tasks?.count ?? 0
+        return temp_data?.count ?? 0
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let t = tasks![indexPath.row]
+        let t = temp_data![indexPath.row]
         let c = tableView.dequeueReusableCell(withIdentifier: "cell")
         c?.textLabel?.text = t.title
-        c?.detailTextLabel?.text = "\(t.days) days  + \(t.counter) completed"
+        c?.detailTextLabel?.text = "\(t.days) days  + \(t.counter) completed + \(t.date)"
         
         if tasks?[indexPath.row].counter == self.tasks?[indexPath.row].days {
-            c?.textLabel?.text = "Completed"
+            c?.textLabel?.text = "Task Complete"
             c?.backgroundColor = UIColor.gray
+            c?.detailTextLabel?.text = " "
         }
         
                   
@@ -85,6 +89,7 @@ class TasksTableViewController: UITableViewController {
             alert_controller.addTextField { (text_field) in
                 text_field.placeholder = "Enter the number of days"
                 self.add = text_field.text!
+                
                 print(self.add)
                 
                 text_field.text = ""
@@ -116,7 +121,7 @@ class TasksTableViewController: UITableViewController {
             self.present(alert_controller, animated: true, completion: nil)
             
         }
-        Add_action.backgroundColor = UIColor.blue
+        Add_action.backgroundColor = UIColor.green
         
         
         let delete_action = UITableViewRowAction(style: .normal, title: "Delete") { (rowaction, indexPath) in
@@ -157,35 +162,7 @@ class TasksTableViewController: UITableViewController {
             self.tableView.reloadData()
         
     }
-    func search_Bar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-          
-            if searchText != "" {
-                var predicate: NSPredicate = NSPredicate()
-                predicate = NSPredicate(format: "title contains %@", "\(searchText)")
-                let Delegate = UIApplication.shared.delegate as! AppDelegate
-                
-                let Managed_context = Delegate.persistentContainer.viewContext
-                let fetch_request = NSFetchRequest<NSFetchRequestResult>(entityName: "Model")
-                fetch_request.predicate = predicate
-                do{
-                    tasks = try Managed_context.fetch(fetch_request) as? [Tasks]
-                    }
-                    catch{
-                               print("error")
-                           }
-                       }else{
-                                  let app_delegate = UIApplication.shared.delegate as! AppDelegate
-                                  let ManagedContext = app_delegate.persistentContainer.viewContext
-                                  let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Model")
-                       do{
-                            tasks = try ManagedContext.fetch(fetchRequest) as? [Tasks]
-                    }catch{
-                                print("error")
-                            }
-                       
-                    }
-            tableView.reloadData()
-        }
+
            
 
     /*
@@ -219,29 +196,32 @@ class TasksTableViewController: UITableViewController {
     
     func loadCoreData(){
         tasks = [Tasks]()
+        //temp_data = tasks
          //create an instance of app delegate
-                let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                let ManagedContext = appDelegate.persistentContainer.viewContext
+                let aDelegate = UIApplication.shared.delegate as! AppDelegate
+                let mContext = aDelegate.persistentContainer.viewContext
          
-         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Model")
+         let fRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Model")
          do{
             
-             let results = try ManagedContext.fetch(fetchRequest)
+             let results = try mContext.fetch(fRequest)
              if results is [NSManagedObject]{
                  for result in results as! [NSManagedObject]{
                      let title = result.value(forKey:"title") as! String
-
+                    //let counter = result.value(forKey: "counter") as! Int
+                                        
                      let days = result.value(forKey: "days") as! Int
+                    let date = result.value(forKey: "date") as! String
+                    
 
-
-                     tasks?.append(Tasks(title: title, days: days))
+                    tasks?.append(Tasks(title: title, days: days, date: date ?? " "))
                      tableView.reloadData()
                  }
              }
             
          } catch{
             
-             print("error")
+             print(error)
          }
          print(tasks!.count )
     }
@@ -274,7 +254,33 @@ class TasksTableViewController: UITableViewController {
                 self.present(AC, animated: true, completion: nil)
     }
    
+    @IBAction func sortAlphaBtn(_ sender: UIBarButtonItem) {
+        
+        let A_sort = self.tasks!
+        self.tasks! = A_sort.sorted { $0.title < $1.title }
+           self.tableView.reloadData()
+
+    }
     
+    @IBAction func dateSortingBtn(_ sender: UIBarButtonItem) {
+
+        let d_Sort = self.tasks!
+        self.tasks! = d_Sort.sorted { $0.date < $1.date }
+           self.tableView.reloadData()
+
+    }
     
 
+}
+
+extension TasksTableViewController: UISearchBarDelegate{
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        temp_data = searchText.isEmpty ? tasks : tasks?.filter({ (item: Tasks) -> Bool in
+            return item.title.range(of: searchText, options: .caseInsensitive) != nil
+        })
+        
+        tableView.reloadData()
+    }
 }

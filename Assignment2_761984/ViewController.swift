@@ -20,8 +20,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        saveCData()
+        
         loadCData()
+        saveCData()
         
         NotificationCenter.default.addObserver(self, selector: #selector(saveCData), name: UIApplication.willResignActiveNotification, object: nil)
     }
@@ -34,10 +35,11 @@ class ViewController: UIViewController {
             let ManagedContext = appDelegate.persistentContainer.viewContext
                
                     for task in tasks!{
-                        let taskEntity = NSEntityDescription.insertNewObject(forEntityName: "Model", into: ManagedContext)
-                        taskEntity.setValue(task.title, forKey: "title")
-                        taskEntity.setValue(task.days, forKey: "days")
-               
+                        let task_entity = NSEntityDescription.insertNewObject(forEntityName: "Model", into: ManagedContext)
+                        task_entity.setValue(task.title, forKey: "title")
+                        task_entity.setValue(task.days, forKey: "days")
+                        //task_entity.setValue(task.counter, forKey: "counter")
+                        task_entity.setValue(task.date, forKey: "date")
                         print("\(task.days)")
                         do{
                             try ManagedContext.save()
@@ -66,7 +68,11 @@ class ViewController: UIViewController {
                     
                      let title = result.value(forKey:"title") as! String
                      let days = result.value(forKey: "days") as! Int
-                     tasks?.append(Tasks(title: title, days: days))
+                    let date = result.value(forKey: "date") as! String
+                    //let counter = result.value(forKey: "counter") as! Int
+                    
+                    
+                    tasks?.append(Tasks(title: title, days: days, date: date))
                     
                  }
              }
@@ -82,6 +88,8 @@ class ViewController: UIViewController {
         print("\(tasks!)......")
     
     }
+    
+    
     
     func clearCData(){
         
@@ -116,9 +124,13 @@ class ViewController: UIViewController {
     
         let titleT = fields[0].text ?? ""
            let daysD = Int(fields[1].text ?? "0") ?? 0
-                      
+           let date = NSDate()
+        let d_formatter = DateFormatter()
+        d_formatter.dateFormat = "EEE, MMM, dd HH:mm:ss"
                    
-           let task = Tasks(title: titleT, days: daysD)
+        let d_string = d_formatter.string(from: date as Date)
+        
+        let task = Tasks(title: titleT, days: daysD, date: d_string)
         
            tasks?.append(task)
            

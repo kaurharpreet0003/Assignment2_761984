@@ -53,13 +53,22 @@
                             <outlet property="delegate" destination="IY7-cs-JsI" id="8lz-x9-RtY"/>
                         </connections>
                     </tableView>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" id="qHj-Bw-JGM">
-                        <barButtonItem key="leftBarButtonItem" title="Sort" id="ivh-cb-by7">
-                            <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
-                            <connections>
-                                <action selector="sortBtn:" destination="IY7-cs-JsI" id="7oB-HB-USl"/>
-                            </connections>
-                        </barButtonItem>
+                        <leftBarButtonItems>
+                            <barButtonItem title="Sort" id="ivh-cb-by7">
+                                <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <connections>
+                                    <action selector="sortAlphaBtn:" destination="IY7-cs-JsI" id="p4M-yK-CMg"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="DateSort" id="IeR-kt-oiS">
+                                <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <connections>
+                                    <action selector="dateSortingBtn:" destination="IY7-cs-JsI" id="5ob-Js-Egl"/>
+                                </connections>
+                            </barButtonItem>
+                        </leftBarButtonItems>
                         <barButtonItem key="rightBarButtonItem" title="Add" id="kUW-BV-3z8">
                             <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
                             <connections>
@@ -67,13 +76,16 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="alphaSort" destination="ivh-cb-by7" id="P8K-7R-0N0"/>
+                        <outlet property="dateSorting" destination="IeR-kt-oiS" id="Fm0-L0-UY8"/>
                         <outlet property="searchBar" destination="7MI-SY-unK" id="ft9-0b-I2j"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nf2-kF-1Ee" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="956" y="39"/>
+            <point key="canvasLocation" x="897" y="37"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="ez8-Qy-2Ld">
@@ -93,7 +105,7 @@
                                 <rect key="frame" x="27" y="325" width="318" height="34"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                <textInputTraits key="textInputTraits"/>
                             </textField>
                         </subviews>
                         <color key="backgroundColor" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
