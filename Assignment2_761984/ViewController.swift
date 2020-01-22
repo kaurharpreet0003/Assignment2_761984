@@ -21,7 +21,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        loadCData()
+        //loadCData()
         saveCData()
         
         NotificationCenter.default.addObserver(self, selector: #selector(saveCData), name: UIApplication.willResignActiveNotification, object: nil)
@@ -80,6 +80,7 @@ class ViewController: UIViewController {
              print(error)
          }
          print(tasks!.count )
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {

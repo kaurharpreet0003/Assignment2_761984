@@ -28,9 +28,15 @@ class TasksTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
         searchBar.delegate = self
+        
         loadCoreData()
+        
+        
         temp_data = tasks
+        
+        
     }
 
     // MARK: - Table view data source
@@ -53,7 +59,7 @@ class TasksTableViewController: UITableViewController {
         c?.textLabel?.text = t.title
         c?.detailTextLabel?.text = "\(t.days) days  + \(t.counter) completed + \(t.date)"
         
-        if tasks?[indexPath.row].counter == self.tasks?[indexPath.row].days {
+        if t.counter == t.days {
             c?.textLabel?.text = "Task Complete"
             c?.backgroundColor = UIColor.gray
             c?.detailTextLabel?.text = " "
@@ -83,82 +89,111 @@ class TasksTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        let Add_action = UITableViewRowAction(style: .normal, title: "Add Day") { (rowaction, indexPath) in
-            print("adding day")
-            let alert_controller = UIAlertController(title: "Add Day", message: "Enter the number of days for completing this task", preferredStyle: .alert)
-            alert_controller.addTextField { (text_field) in
-                text_field.placeholder = "Enter the number of days"
-                self.add = text_field.text!
-                
-                print(self.add)
-                
-                text_field.text = ""
-            }
-            
-            let cancel_action = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-            
-            cancel_action.setValue(UIColor.darkGray, forKey: "color")
-            
-            let add_ac = UIAlertAction(title: "Add Day", style: .default) { (alert) in
-                 
-                let count = alert_controller.textFields?.first?.text
-                
-                self.tasks?[indexPath.row].counter += Int(count!) ?? 0
-                
-                if self.tasks?[indexPath.row].counter == self.tasks?[indexPath.row].days{
+        
+        
+        let Addaction = UITableViewRowAction(style: .normal, title: "Add Day") { (rowaction, indexPath) in
+                    print("Add day")
                     
-                    print("....")
+            
+                    let ac = UIAlertController(title: "Add Day", message: "Enter a day for this task", preferredStyle: .alert)
+                                   
+                    ac.addTextField { (textField ) in
+                                    
+                        textField.placeholder = "number of days"
+                                    
+                            self.add = textField.text!
+            
+                                    
+                                       textField.text = ""
+                                    
+                        }
+        
+            
+            
+                    let Cancel_action = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            
+                    Cancel_action.setValue(UIColor.brown, forKey: "titleTextColor")
+            
+                        let AddItem_Action = UIAlertAction(title: "Add Item", style: .default){
+                                       (action) in
+                        let a = ac.textFields?.first?.text
+                                    
+                        self.temp_data?[indexPath.row].counter += Int(a!) ?? 0
+                                    
+                                    
+                        if self.temp_data?[indexPath.row].counter == self.temp_data?[indexPath.row].days{
+                                     
+                        }
+                                 
+                    self.tableView.reloadData()
+                              
+                    }
+                AddItem_Action.setValue(UIColor.black, forKey: "titleTextColor")
+                        ac.addAction(Cancel_action)
+            
+                        ac.addAction(AddItem_Action)
+            
+                    self.present(ac, animated: true, completion: nil)
+                }
+        
+                Addaction.backgroundColor = UIColor.green
+                
+        
+                let delete_action = UITableViewRowAction(style: .normal, title: "Delete") { (rowaction, indexPath) in
                     
+                    
+                          // let taskItem = self.tasks![indexPath.row] as? NSManagedObject
+                           let appDele = UIApplication.shared.delegate as! AppDelegate
+                    
+                           let MContext = appDele.persistentContainer.viewContext
+                    
+                           let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskModel")
+                    
+                    
+                    
+                    
+                    do{
+                        
+                        let test = try MContext.fetch(fetchRequest)
+                        
+                        let item = test[indexPath.row] as? NSManagedObject
+                        
+                        self.temp_data?.remove(at: indexPath.row)
+                        
+                        self.tasks?.remove(at: indexPath.row)
+                        
+                        MContext.delete(item!)
+                        
+                        tableView.reloadData()
+                        
+                        do{
+                            try MContext.save()
+                            }
+                    
+                        catch{
+                                           print(error)
+                                       }
+                    }
+                    catch{
+                        
+                        print(error)
+                    }
+                           
+                        
+
                 }
-                self.tableView.reloadData()
-            }
-            
-            add_ac.setValue(UIColor.brown, forKey: "textColor")
-            
-             alert_controller.addAction(add_ac)
-            alert_controller.addAction(cancel_action)
-            
-            self.present(alert_controller, animated: true, completion: nil)
-            
-        }
-        Add_action.backgroundColor = UIColor.green
-        
-        
-        let delete_action = UITableViewRowAction(style: .normal, title: "Delete") { (rowaction, indexPath) in
-            
-                   let app_Delegate = UIApplication.shared.delegate as! AppDelegate
-                   let ManagedContext = app_Delegate.persistentContainer.viewContext
-                   let fetch_Request = NSFetchRequest<NSFetchRequestResult>(entityName: "Model")
-            do{
-                let test = try ManagedContext.fetch(fetch_Request)
-                let i = test[indexPath.row] as!NSManagedObject
-                self.tasks?.remove(at: indexPath.row)
-                
-                ManagedContext.delete(i)
-                
-                tableView.reloadData()
-                
-                do{
-                    try ManagedContext.save()
-                }
-            
-                catch{
-                    print(error)
-                }
-            }
-            catch{
-                print(error)
-            }
-        }
-               delete_action.backgroundColor = UIColor.red
-        
-               return [Add_action,delete_action]
+                delete_action.backgroundColor = UIColor.red
+                return [Addaction,delete_action]
     }
 
     
     @IBAction func sortBtn(_ sender: UIBarButtonItem) {
+        
+        
           let sorting = self.tasks!
+        
             self.tasks! = sorting.sorted { $0.title < $1.title }
+        
             self.tableView.reloadData()
         
     }
@@ -205,8 +240,10 @@ class TasksTableViewController: UITableViewController {
          do{
             
              let results = try mContext.fetch(fRequest)
+            
              if results is [NSManagedObject]{
                  for result in results as! [NSManagedObject]{
+                    
                      let title = result.value(forKey:"title") as! String
                     //let counter = result.value(forKey: "counter") as! Int
                                         
@@ -245,6 +282,7 @@ class TasksTableViewController: UITableViewController {
                    let Cancel_Action = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
                    Cancel_Action.setValue(UIColor.brown, forKey: "titleTextColor")
                    let Add_Item_Action = UIAlertAction(title: "Add Item", style: .default){
+                    
                        (action) in
         }
         
@@ -256,16 +294,16 @@ class TasksTableViewController: UITableViewController {
    
     @IBAction func sortAlphaBtn(_ sender: UIBarButtonItem) {
         
-        let A_sort = self.tasks!
-        self.tasks! = A_sort.sorted { $0.title < $1.title }
+        let A_sort = self.temp_data!
+        self.temp_data! = A_sort.sorted { $0.title < $1.title }
            self.tableView.reloadData()
 
     }
     
     @IBAction func dateSortingBtn(_ sender: UIBarButtonItem) {
 
-        let d_Sort = self.tasks!
-        self.tasks! = d_Sort.sorted { $0.date < $1.date }
+        let d_Sort = self.temp_data!
+        self.temp_data! = d_Sort.sorted { $0.date < $1.date }
            self.tableView.reloadData()
 
     }
@@ -281,6 +319,11 @@ extension TasksTableViewController: UISearchBarDelegate{
             return item.title.range(of: searchText, options: .caseInsensitive) != nil
         })
         
+        tableView.reloadData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        temp_data = tasks!
         tableView.reloadData()
     }
 }
